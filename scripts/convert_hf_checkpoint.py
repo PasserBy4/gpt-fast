@@ -82,11 +82,11 @@ def convert_hf_checkpoint(
         )
 
     merged_result = {}
+    for file in sorted(bin_files):
+        state_dict = torch.load(str(file), map_location="cpu", mmap=True, weights_only=True)
+        merged_result.update(state_dict)
+    final_result = {}
     if weight_map is not None:
-        for file in sorted(bin_files):
-            state_dict = torch.load(str(file), map_location="cpu", mmap=True, weights_only=True)
-            merged_result.update(state_dict)
-        final_result = {}
         for key, value in merged_result.items():
             if "layers" in key:
                 abstract_key = re.sub(r'(\d+)', '{}', key)
